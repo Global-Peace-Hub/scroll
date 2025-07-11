@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GKVDN70B13"></script>
+  <script> window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-GKVDN70B13'); </script>
+  <title>PeaceRep</title>
+  <link rel="icon" href="data:;base64,iVBORwOKGO=" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.8.0/leaflet.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.8.0/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min.js" crossorigin="anonymous"
+    referrerpolicy="no-referrer"></script>
+  <script src='https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css' rel='stylesheet' />
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+  <link rel="icon" type="image/png" href="img/peace.png">
+</head>
+
+<body>
+  <div id="initial_screen">
+    <div id="init_load">loading...</div>
+  </div>
+
+  <div id="header">
+    <h1 id="title_header"></h1>
+    <a href="https://peacerep.org/" target="_blank">
+      <img alt="PeaceRep Logo" id="peace_img" src="img/logo.png" />
+    </a>
+    <button title="Information" id="info_button"><i class="fa fa-info"></i></button>
+    <div class="dropdown">
+      <button class="dropbtn">Select Actor</button>
+      <div class="dropdown-content">
+        <a href="#" id="russia">Russia</a>
+        <a href="#" id="china">China</a>
+      </div>
+    </div>
+    <a href="https://www.st-andrews.ac.uk/" target="_blank">
+      <img id="and_img" src="img/image10.png" alt="Uni Logo" />
+    </a>
+    <a href="https://www.ed.ac.uk/" target="_blank">
+      <img id="uoe_img" src="img/unilogo.png" alt="Uni Logo" />
+    </a>
+  </div>
+
+  <div id="info">
+    <div id="info_title_div">
+      <h3 style="text-align: center; margin-top: 5px; margin-bottom: 5px;">Information</h3>
+    </div>
+    <div id="info_content">
+      <p style="font-size: 14px;">
+        This scrollytelling application presents trends and analysis on Russia and China as third party signatories in
+        international/national peace agreements contained in PA-X Peace Agreements Database version 8 (1990-2023).
+        Select an actor using the drop down in the header, and scroll along the left side of your screen to display the
+        next chapter. Skip to a specific part of the story using the icons along the left.
+        The stories provide an overview of temporal trends and comparisons to other members of the UN Security Council,
+        trends of the actors involvement by stage of process, and the geographical spread of their involvement as a
+        third party to peace agreements.
+        For more on PA-X fields and definitions, see <a
+          href="https://pax.peaceagreements.org/cms/documents/3956/PA_X_codebook_v8.pdf" , target="_blank">PA-X Codebook</a>
+      </p>
+      </br>
+      <p style=" font-size: 12px;">Credits: <br>
+          Textual Analysis by Mateja Peter, PeaceRep (University of St Andrews)
+          <br>
+          Visualization by Tomas Vancisin, PeaceRep (University of Edinburgh)
+          <br>
+          Data Preparation by Niamh Henry, PeaceRep (University of Edinburgh)
+          <br>
+          <br>
+          Data:<br> Sanja Badanjak and Niamh Henry, Third Parties in Peace Agreements Dataset (2024), PeaceRep
+          (University of Edinburgh) [Forthcoming]
+      </p>
+    </div>
+  </div>
+
+
+  <div id="story">
+
+    <div id="separator" class="overview">
+      <div id="ch1_div">
+        <h1 id="num_pp"></h1> Peace Processes
+      </div>
+      <div id="ch1_div">
+        <h1 id="num_agt"></h1> Agreements
+      </div>
+      <div id="ch1_div">
+        <h1 id="num_act"></h1> Co-Signatories
+      </div>
+      <div id="ch1_div">
+        <h1 id="yr_active"></h1> Activity Range
+      </div>
+    </div>
+
+    <div id="indicator">
+      <svg id="indicator_svg" style="width: 20px;">
+        <line id="indicator_line" x1="8.5" y1="5" x2="8.5" style="stroke:white; stroke-width:1; opacity: 0.5" />
+        <circle id="movingCircle" cx="8.5" cy="9" r="6" style="stroke: white; fill: black;">
+      </svg>
+      <img id="bee_icon" src="img/bees.png" alt="Uni Logo" />
+      <img id="area_icon" src="img/area.png" alt="Uni Logo" />
+      <img id="globe_icon" src="img/world.png" alt="Uni Logo" />
+      <img id="chart_icon" src="img/chart.png" alt="Uni Logo" />
+      <img id="pie_icon" src="img/pie.png" alt="Uni Logo" />
+      <img id="research_icon" src="img/research.png" alt="Uni Logo" />
+      <div id="icon_tooltip"></div>
+    </div>
+
+
+    <div id="separator05" class="overview">
+      <div id="ch2_div">
+        Agreements Timeline
+      </div>
+    </div>
+
+    <!-- beeswarm -->
+    <div class="graphic">
+      <div class="graphic__vis">
+        <div id="hover_description"></div>
+        <svg id="visualization"></svg>
+      </div>
+      <div class="graphic__prose">
+        <div class="trigger one" data-step="0">
+          <p class="p1"></p>
+        </div>
+        <div class="trigger two" data-step="1">
+          <p class="p2"></p>
+        </div>
+        <div class="trigger three" data-step="2">
+          <p class="p3"></p>
+        </div>
+        <div class="trigger four" data-step="3" style="height: 200px;">
+        </div>
+      </div>
+    </div>
+
+    <div id="separator05" class="overview">
+      <div id="ch2_div" class="council_separator">
+      </div>
+    </div>
+
+    <!-- multiline -->
+    <div class="graphic075">
+      <div class="graphic__vis__075">
+        <svg id="visualization075"></svg>
+      </div>
+      <div class="graphic__prose__075">
+        <div class="trigger five" data-step="4">
+          <p class="p4"></p>
+        </div>
+        <div class="trigger six" data-step="5">
+          <p class="p5" style="background-color: black;"></p>
+        </div>
+        <!-- <div class="trigger seven" data-step="6">
+        </div> -->
+      </div>
+    </div>
+
+    <div id="separator05" class="overview">
+      <div id="ch2_div">
+        Agreement Stages
+      </div>
+    </div>
+
+    <!-- donut -->
+    <div class="graphic05">
+      <div class="graphic__vis__05">
+        <svg id="visualization05"></svg>
+      </div>
+      <div class="graphic__prose__05">
+        <div class="trigger eight" data-step="7">
+          <p class="p6"></p>
+        </div>
+        <div class="trigger nine" data-step="8">
+          <p class="p7" style="background-color: black;"></p>
+        </div>
+        <!-- <div class="trigger ten" data-step="9">
+        </div> -->
+      </div>
+    </div>
+
+    <div id="separator05" class="overview">
+      <div id="ch2_div">
+        Comparison of Agreement Stages
+      </div>
+    </div>
+
+    <!-- bar chart -->
+    <div class="graphic06">
+      <div class="graphic__vis__06">
+        <svg id="visualization06"></svg>
+      </div>
+      <div class="graphic__prose__06">
+        <div class="trigger eleven" data-step="10">
+          <p class="p8"></p>
+        </div>
+        <div class="trigger twelve" data-step="11">
+          <p class="p9"></p>
+        </div>
+        <div class="trigger thirteen" data-step="12">
+          <p class="p10"></p>
+        </div>
+        <div class="trigger fourteen" data-step="13">
+          <p class="p11" style="background-color: black;"></p>
+        </div>
+      </div>
+    </div>
+
+    <div id="separator05" class="overview">
+      <div id="ch2_div">
+        Geography
+      </div>
+    </div>
+
+    <!-- map -->
+    <div class="graphic1">
+      <div class="graphic__vis__1">
+        <div id="map"></div>
+      </div>
+      <div class="graphic__prose__1">
+        <div class="trigger fifteen" data-step="14">
+          <p class="p12"></p>
+        </div>
+        <div class="trigger sixteen" data-step="15">
+          <p class="p13"></p>
+        </div>
+        <div class="trigger seventeen" data-step="16">
+          <p class="p14" style="background-color: black;"></p>
+        </div>
+      </div>
+    </div>
+    <div id="break"></div>
+
+    <div id="separator1">
+      <button onclick="topFunction()" id="myBtn" title="Go to top">
+        <i class="fa fa-arrow-up"></i>
+      </button>
+      <div style="position: absolute; top: 0px; width: 100%; text-align: center;">
+        <h3 id="research_header"></h3>
+      </div>
+      <div id="vik1">
+      </div>
+      <div id="vik2">
+      </div>
+      <div id="vik3">
+      </div>
+      <div id="vik4">
+      </div>
+      <div id="vik5">
+      </div>
+      <div id="footer" style="position: absolute; bottom: 10px; width: 100%; text-align: center;">
+        <h5><b>Text</b>: Mateja Peter and Sanja Badanjak</br><b>Data</b>: Third Party to Peace Agreements Dataset. Sanja
+          Badanjak and Niamh Henry (2024)</br><b>Visualisation</b>: Tomas Vancisin</h5>
+      </div>
+    </div>
+
+  </div>
+  <script src="js/countries.js"></script>
+  <script src="js/d3.v6.min.js"></script>
+  <script src="js/noframework.waypoints.min.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/scrollerVis.js"></script>
+</body>
+
+</html>
